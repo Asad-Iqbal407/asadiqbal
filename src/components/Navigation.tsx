@@ -53,38 +53,47 @@ export default function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-white/90 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+          ? 'glass shadow-lg py-2'
+          : 'bg-transparent py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+            className="text-2xl font-extrabold tracking-tight cursor-pointer"
+            onClick={() => scrollToSection('#home')}
           >
-            Asad Iqbal
+            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient-x">
+              Asad Iqbal
+            </span>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => {
-              const Icon = item.icon;
+              const isActive = activeSection === item.href.substring(1);
               return (
                 <motion.button
                   key={item.name}
                   onClick={() => scrollToSection(item.href)}
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    activeSection === item.href.substring(1)
-                      ? 'text-purple-600 bg-purple-100'
-                      : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50'
+                  className={`relative flex items-center px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                    isActive
+                      ? 'text-white'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-purple-500'
                   }`}
                 >
-                  <Icon size={18} />
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-pill"
+                      className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full -z-10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
                   <span>{item.name}</span>
                 </motion.button>
               );
@@ -94,9 +103,9 @@ export default function Navigation() {
           {/* Mobile menu button */}
           <div className="md:hidden">
             <motion.button
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-purple-600 p-2"
+              className="p-2 rounded-xl glass text-gray-700 dark:text-gray-300"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </motion.button>
@@ -108,25 +117,24 @@ export default function Navigation() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-white/95 backdrop-blur-md border-t"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="md:hidden absolute top-full left-4 right-4 mt-2"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1">
+            <div className="glass rounded-2xl p-4 shadow-2xl space-y-2 border border-white/20">
               {navItems.map((item) => {
                 const Icon = item.icon;
+                const isActive = activeSection === item.href.substring(1);
                 return (
                   <motion.button
                     key={item.name}
                     onClick={() => scrollToSection(item.href)}
-                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`flex items-center space-x-3 w-full px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                      activeSection === item.href.substring(1)
-                        ? 'text-purple-600 bg-purple-100'
-                        : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50'
+                    className={`flex items-center space-x-4 w-full px-4 py-3 rounded-xl text-base font-semibold transition-all duration-200 ${
+                      isActive
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-white/10'
                     }`}
                   >
                     <Icon size={20} />

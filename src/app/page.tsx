@@ -1,12 +1,41 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Github, Linkedin, User, Code, Briefcase, GraduationCap, Award, Heart } from 'lucide-react';
+import { motion, useScroll, useAnimation } from 'framer-motion';
+import { MapPin, Phone, Mail, Github, Linkedin, User, Code, Briefcase, GraduationCap, Award, ArrowUp } from 'lucide-react';
 import ContactForm from "@/components/ContactForm";
 import ImageSlider from "@/components/ImageSlider";
-import Navigation from "@/components/Navigation";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export default function Home() {
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [roleIndex, setRoleIndex] = useState(0);
+  const roles = [
+    "Computer Science Student",
+    "AI Enthusiast",
+    "Full Stack Developer",
+    "Problem Solver"
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % roles.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 500);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0 },
@@ -22,429 +51,550 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
-      <Navigation />
+    <div className="min-h-screen bg-background text-foreground selection:bg-purple-500/30">
+      {/* Scroll to Top Button */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: showScrollTop ? 1 : 0, scale: showScrollTop ? 1 : 0 }}
+        onClick={scrollToTop}
+        className="fixed bottom-8 right-8 z-50 p-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-xl hover:shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 hover:scale-110 border border-white/20"
+      >
+        <ArrowUp size={24} />
+      </motion.button>
 
-      <div className="pt-16">
+      <div className="pt-0">
         {/* Hero Section */}
-        <section id="home" className="min-h-screen flex items-center justify-center section-bg-1 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-blue-900/30 to-pink-900/40"></div>
-          <motion.div
-            {...fadeInUp}
-            className="text-center text-white relative z-10 px-4"
-          >
-            <motion.h1
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-6xl md:text-8xl font-bold mb-4 text-white drop-shadow-2xl"
-              style={{
-                textShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3), 0 0 60px rgba(255,255,255,0.2)'
-              }}
-            >
-              Asad Iqbal
-            </motion.h1>
-            <motion.p
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl md:text-2xl mb-8 text-gray-200"
-            >
-              Computer Science Student & AI Enthusiast
-            </motion.p>
+        <section id="home" className="min-h-[90vh] flex items-center justify-center relative overflow-hidden px-4">
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 z-0">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[150px] animate-float"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.05)_0%,transparent_70%)]"></div>
+          </div>
+
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10">
             <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="animate-float"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
             >
-              <button
-                onClick={() => {
-                  const element = document.getElementById('projects');
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                className="btn-primary text-lg px-8 py-4 cursor-pointer hover:scale-105 transition-transform duration-200"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass mb-6"
               >
-                Explore My Work
-              </button>
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
+                </span>
+                <span className="text-sm font-medium">Available for new opportunities</span>
+              </motion.div>
+              
+              <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight">
+                Hi, I&apos;m <br />
+                <span className="gradient-text animate-background-pan bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 bg-[length:200%_auto]">
+                  Asad Iqbal
+                </span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-xl leading-relaxed h-24">
+                A passionate{' '}
+                <span className="block text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-indigo-500 bg-clip-text text-transparent mt-2">
+                  <motion.span
+                    key={roleIndex}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {roles[roleIndex]}
+                  </motion.span>
+                </span>
+                <span className="block mt-2 text-lg">
+                  crafting modern digital experiences with cutting-edge technology.
+                </span>
+              </p>
+
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="btn-primary text-lg group flex items-center space-x-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
+                >
+                  <span>View My Projects</span>
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="btn-secondary text-lg hover:bg-foreground/5 backdrop-blur-sm"
+                >
+                  Let&apos;s Talk
+                </button>
+              </div>
+
+              <div className="mt-12 flex items-center space-x-8">
+                <a href="https://github.com/Asad-Iqbal407" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-purple-500 transition-colors transform hover:scale-110">
+                  <Github size={28} />
+                </a>
+                <a href="https://linkedin.com/in/asad-iqbal" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-500 transition-colors transform hover:scale-110">
+                  <Linkedin size={28} />
+                </a>
+                <a href="mailto:measad408@gmail.com" className="text-muted-foreground hover:text-red-500 transition-colors transform hover:scale-110">
+                  <Mail size={28} />
+                </a>
+              </div>
             </motion.div>
-          </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="relative hidden lg:block"
+            >
+              <div className="relative z-10 w-full aspect-square rounded-full overflow-hidden p-2 flex items-center justify-center border-4 border-white/10 glass shadow-2xl shadow-purple-500/20">
+                <div className="relative w-full h-full rounded-full overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&h=800&fit=crop"
+                    alt="Asad Iqbal - Developer"
+                    fill
+                    className="object-cover hover:scale-110 transition-transform duration-700"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-transparent mix-blend-overlay"></div>
+                </div>
+              </div>
+              
+              {/* Floating tech icons */}
+              <motion.div 
+                animate={{ y: [0, -20, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-10 -right-10 glass p-4 rounded-2xl z-20"
+              >
+                <Code className="text-purple-500 w-8 h-8" />
+              </motion.div>
+              
+              <motion.div 
+                animate={{ y: [0, 20, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-10 -left-10 glass p-4 rounded-2xl z-20"
+              >
+                <Briefcase className="text-blue-500 w-8 h-8" />
+              </motion.div>
+
+              {/* Decorative elements */}
+              <div className="absolute -top-10 -right-10 w-64 h-64 bg-indigo-500/30 rounded-full blur-3xl animate-pulse"></div>
+              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+            </motion.div>
+          </div>
         </section>
+
+        {/* Wave Separator */}
+        <div className="w-full overflow-hidden leading-[0] transform translate-y-1">
+          <svg className="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-purple-500/10"></path>
+          </svg>
+        </div>
+
+        {/* Stats Section */}
+        <section className="py-20 px-4 bg-purple-500/10">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[
+                { number: "3+", label: "Years Experience", color: "from-blue-400 to-cyan-300" },
+                { number: "15+", label: "Projects Built", color: "from-purple-400 to-pink-300" },
+                { number: "5+", label: "AI Models Trained", color: "from-orange-400 to-red-300" },
+                { number: "100%", label: "Client Satisfaction", color: "from-green-400 to-emerald-300" }
+              ].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+                  className="relative group"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-r ${stat.color} rounded-2xl blur opacity-25 group-hover:opacity-50 transition-opacity duration-500`}></div>
+                  <div className="relative glass rounded-2xl p-6 text-center hover-lift border border-white/10 group-hover:border-white/20 transition-colors bg-black/40 backdrop-blur-xl">
+                    <div className={`text-4xl md:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`}>
+                      {stat.number}
+                    </div>
+                    <div className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">{stat.label}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Inverted Wave Separator */}
+        <div className="w-full overflow-hidden leading-[0] transform rotate-180 -translate-y-1">
+          <svg className="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-purple-500/10"></path>
+          </svg>
+        </div>
 
         {/* About Section */}
-        <section id="about" className="py-20 px-4">
-          <div className="max-w-6xl mx-auto">
+        <section id="about" className="py-32 px-4 relative overflow-hidden">
+          <div className="max-w-6xl mx-auto relative z-10">
             <motion.div
-              {...fadeInUp}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-4">About Me</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
-            </motion.div>
-
-            <motion.div
-              variants={stagger}
-              initial="initial"
-              whileInView="animate"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="grid md:grid-cols-2 gap-12 items-center"
+              className="text-center mb-20"
             >
-              <motion.div {...fadeInUp} className="space-y-6">
-                <div className="flex items-center space-x-3">
-                  <User className="text-purple-600" size={24} />
-                  <h3 className="text-2xl font-semibold text-gray-800">Profile Summary</h3>
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">About <span className="gradient-text">Me</span></h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Dedicated to solving complex problems through elegant code and intelligent algorithms.
+              </p>
+            </motion.div>
+
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="space-y-8"
+              >
+                <div className="glass rounded-3xl p-8 space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500">
+                      <User size={24} />
+                    </div>
+                    <h3 className="text-2xl font-bold">The Journey</h3>
+                  </div>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    I am an enthusiastic Computer Science student with a passion for web development and AI
+                    integration. I have developed various websites using JavaScript, the MERN stack, and Flask. 
+                    My projects include integrating AI models into websites using Flask, showcasing my skills 
+                    in both frontend and backend development.
+                  </p>
                 </div>
-                <p className="text-gray-700 leading-relaxed text-lg">
-                  I am an enthusiastic Computer Science student with a passion for web development and AI
-                  integration. I have developed various websites using JavaScript, the MERN stack, and Flask. My
-                  projects include integrating AI models into websites using Flask, showcasing my skills in both
-                  frontend and backend development, as well as my ability to leverage machine learning for real-world applications.
-                </p>
               </motion.div>
 
-              <motion.div {...fadeInUp} className="glass rounded-2xl p-8 hover-lift">
-                <h3 className="text-2xl font-semibold text-gray-800 mb-6">Quick Facts</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <MapPin className="text-blue-500" size={20} />
-                    <span className="text-gray-700">Lisbon, Portugal</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Phone className="text-green-500" size={20} />
-                    <span className="text-gray-700">+351 920 572 641</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Mail className="text-red-500" size={20} />
-                    <span className="text-gray-700">measad408@gmail.com</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Github className="text-gray-700" size={20} />
-                    <a href="https://github.com/Asad-Iqbal407" className="text-purple-600 hover:underline">GitHub Profile</a>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Linkedin className="text-blue-600" size={20} />
-                    <a href="https://www.linkedin.com/in/asad-iqbal-377655282" className="text-purple-600 hover:underline">LinkedIn Profile</a>
-                  </div>
-                </div>
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="grid sm:grid-cols-2 gap-6"
+              >
+                {[
+                  { icon: MapPin, label: "Location", value: "Lisbon, Portugal", color: "text-blue-500", href: "https://www.google.com/maps/search/?api=1&query=Lisbon,+Portugal" },
+                  { icon: Phone, label: "Phone", value: "+351 920 572 641", color: "text-green-500", href: "tel:+351920572641" },
+                  { icon: Mail, label: "Email", value: "measad408@gmail.com", color: "text-red-500", href: "mailto:measad408@gmail.com" },
+                  { icon: Github, label: "GitHub", value: "Asad-Iqbal407", color: "text-purple-500", href: "https://github.com/Asad-Iqbal407" },
+                ].map((item, i) => (
+                  <a
+                    key={i}
+                    href={item.href}
+                    target={item.label === "Location" || item.label === "GitHub" ? "_blank" : undefined}
+                    rel={item.label === "Location" || item.label === "GitHub" ? "noopener noreferrer" : undefined}
+                    className="glass rounded-2xl p-6 hover-lift hover:bg-white/5 transition-colors block"
+                  >
+                    <item.icon className={`${item.color} mb-4`} size={24} />
+                    <p className="text-sm text-muted-foreground mb-1">{item.label}</p>
+                    <p className="font-semibold truncate hover:text-purple-500 transition-colors">{item.value}</p>
+                  </a>
+                ))}
               </motion.div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
-
+        {/* Wave Separator before Skills */}
+        <div className="w-full overflow-hidden leading-[0] transform translate-y-1 bg-background">
+          <svg className="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-purple-500/5"></path>
+          </svg>
+        </div>
 
         {/* Skills Section */}
-        <section id="skills" className="py-20 px-4 section-bg-2">
+        <section id="skills" className="py-32 px-4 bg-purple-500/5 relative">
           <div className="max-w-6xl mx-auto">
             <motion.div
-              {...fadeInUp}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-4">Skills & Expertise</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
-            </motion.div>
-
-            <motion.div
-              variants={stagger}
-              initial="initial"
-              whileInView="animate"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="grid md:grid-cols-3 gap-8"
+              className="text-center mb-20"
             >
-              <motion.div {...fadeInUp} className="glass rounded-2xl p-8 hover-lift">
-                <div className="flex items-center space-x-3 mb-6">
-                  <Code className="text-purple-600" size={32} />
-                  <h3 className="text-2xl font-semibold text-gray-800">Programming Languages</h3>
-                </div>
-                <div className="space-y-3">
-                  {['Python', 'JavaScript', 'PHP', 'HTML/CSS'].map((skill, index) => (
-                    <motion.div
-                      key={skill}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center space-x-3"
-                    >
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <span className="text-gray-700 font-medium">{skill}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div {...fadeInUp} className="glass rounded-2xl p-8 hover-lift">
-                <div className="flex items-center space-x-3 mb-6">
-                  <Briefcase className="text-pink-600" size={32} />
-                  <h3 className="text-2xl font-semibold text-gray-800">Frameworks & Tools</h3>
-                </div>
-                <div className="space-y-3">
-                  {['Flask', 'React.js', 'Node.js', 'MERN Stack'].map((skill, index) => (
-                    <motion.div
-                      key={skill}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center space-x-3"
-                    >
-                      <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                      <span className="text-gray-700 font-medium">{skill}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div {...fadeInUp} className="glass rounded-2xl p-8 hover-lift">
-                <div className="flex items-center space-x-3 mb-6">
-                  <Award className="text-blue-600" size={32} />
-                  <h3 className="text-2xl font-semibold text-gray-800">Other Skills</h3>
-                </div>
-                <div className="space-y-3">
-                  {['Machine Learning', 'Computer Vision', 'Web Development'].map((skill, index) => (
-                    <motion.div
-                      key={skill}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center space-x-3"
-                    >
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-gray-700 font-medium">{skill}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Projects Showcase */}
-        <section id="projects" className="py-20 px-4">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              {...fadeInUp}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-4">Featured Projects</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">Expertise <span className="gradient-text">Areas</span></h2>
+              <p className="text-xl text-muted-foreground">The tools and technologies I use to bring ideas to life.</p>
             </motion.div>
 
-            <motion.div
-              variants={stagger}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="mb-16"
-            >
-              <ImageSlider />
-            </motion.div>
-          </div>
-        </section>
-
-
-
-        {/* Education Section */}
-        <section id="education" className="py-20 px-4 section-bg-3">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              {...fadeInUp}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-4">Education</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
-            </motion.div>
-
-            <motion.div
-              {...fadeInUp}
-              className="glass rounded-2xl p-8 hover-lift"
-            >
-              <div className="flex items-center space-x-4 mb-6">
-                <GraduationCap className="text-purple-600" size={48} />
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-800">Bachelor of Science in Computer Science</h3>
-                  <p className="text-purple-600 font-medium">Sep 2020 - July 2024</p>
-                </div>
-              </div>
-              <p className="text-gray-700 text-lg mb-4">
-                University of Gujrat Sub Campus Mandi Baha Uddin, Punjab, Pakistan
-              </p>
-              <div className="border-t pt-4">
-                <h4 className="text-lg font-semibold text-gray-800 mb-3">Key Courses:</h4>
-                <div className="grid md:grid-cols-2 gap-2">
-                  {[
-                    'Data Structures and Algorithms',
-                    'Machine Learning',
-                    'Database Management Systems',
-                    'Artificial Intelligence',
-                    'Web Development'
-                  ].map((course, index) => (
-                    <motion.div
-                      key={course}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center space-x-2"
-                    >
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <span className="text-gray-700">{course}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Certifications Section */}
-        <section id="certifications" className="py-20 px-4">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              {...fadeInUp}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-4">Certifications</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
-            </motion.div>
-
-            <motion.div
-              variants={stagger}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
+            <div className="grid md:grid-cols-3 gap-8">
               {[
-                {
-                  title: 'React.js',
-                  issuer: 'LinkedIn Learning',
-                  link: 'https://www.linkedin.com/learning/certificates/1a0836280fccd3487fca28edce2c52e949f9ef82b18196d88f849851b1f49b45?trk=share_certificate',
-                  icon: '⚛️'
+                { 
+                  icon: Code, 
+                  title: "Development", 
+                  skills: ['Python', 'JavaScript', 'React.js', 'Node.js'],
+                  gradient: "from-indigo-500 to-purple-500"
                 },
-                {
-                  title: 'Node.js',
-                  issuer: 'LinkedIn Learning',
-                  link: 'https://www.linkedin.com/learning/certificates/ebfda41df6410f97ba15f155c1ffed28e257c0c96a4464c5e9df05871deb17e3?trk=share_certificate',
-                  icon: '🟢'
+                { 
+                  icon: Briefcase, 
+                  title: "Frameworks", 
+                  skills: ['Flask', 'MERN Stack', 'Tailwind CSS', 'Next.js'],
+                  gradient: "from-pink-500 to-rose-500"
                 },
-                {
-                  title: 'PHP & MySQL',
-                  issuer: 'LinkedIn Learning',
-                  link: 'https://www.linkedin.com/learning/certificates/6e4138cd0737cc95f6ce73d8ef23dba53c961800fa01c9db09713d5fb490b117?trk=share_certificate',
-                  icon: '🐘'
-                },
-                {
-                  title: 'Flask',
-                  issuer: 'LinkedIn Learning',
-                  link: 'https://www.linkedin.com/learning/certificates/be3e2b2fbc3d16964905a846e9cade13a597934822560141bff571b96a2c13aa?trk=share_certificate',
-                  icon: '🍶'
-                },
-                {
-                  title: 'Machine Learning',
-                  issuer: 'Great Learning',
-                  link: 'https://www.mygreatlearning.com/certificate/FPMZDTXL',
-                  icon: '🤖'
+                { 
+                  icon: Award, 
+                  title: "Specialization", 
+                  skills: ['Machine Learning', 'Computer Vision', 'AI Integration', 'Web App Architecture'],
+                  gradient: "from-blue-500 to-cyan-500"
                 }
-              ].map((cert, index) => (
+              ].map((category, i) => (
                 <motion.div
-                  key={cert.title}
-                  {...fadeInUp}
-                  whileHover={{ y: -5 }}
-                  className="glass rounded-2xl p-6 hover-lift text-center"
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="glass rounded-3xl p-8 hover-lift group relative overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-300"
                 >
-                  <div className="text-4xl mb-4">{cert.icon}</div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">{cert.title}</h3>
-                  <p className="text-purple-600 font-medium mb-4">{cert.issuer}</p>
-                  <a
-                    href={cert.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center space-x-2 text-purple-600 hover:text-purple-800 font-medium transition-colors duration-200"
+                  <div className={`absolute -right-10 -top-10 w-32 h-32 bg-gradient-to-br ${category.gradient} rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${category.gradient} p-4 mb-8 text-white shadow-lg group-hover:scale-110 transition-transform relative z-10`}>
+                    <category.icon size={32} />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-6 relative z-10">{category.title}</h3>
+                  <div className="flex flex-wrap gap-2 relative z-10">
+                    {category.skills.map((skill) => (
+                      <span key={skill} className="px-3 py-1 rounded-lg bg-foreground/5 text-sm font-medium hover:bg-foreground/10 transition-colors cursor-default">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Wave Separator after Skills */}
+        <div className="w-full overflow-hidden leading-[0] transform rotate-180 -translate-y-1 bg-background">
+          <svg className="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-purple-500/5"></path>
+          </svg>
+        </div>
+
+        {/* Projects Section */}
+        <section id="projects" className="py-32 px-4">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-20"
+            >
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">Featured <span className="gradient-text">Work</span></h2>
+              <p className="text-xl text-muted-foreground">A collection of projects that showcase my technical capabilities.</p>
+            </motion.div>
+
+            <ImageSlider />
+          </div>
+        </section>
+
+        {/* Wave Separator before Education */}
+        <div className="w-full overflow-hidden leading-[0] transform translate-y-1 bg-background">
+          <svg className="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-blue-500/5"></path>
+          </svg>
+        </div>
+
+        {/* Experience & Education Timeline */}
+        <section id="education" className="py-32 px-4 bg-blue-500/5">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-20"
+            >
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">My <span className="gradient-text">Journey</span></h2>
+              <p className="text-xl text-muted-foreground">The path that led me to where I am today.</p>
+            </motion.div>
+
+            <div className="relative">
+              {/* Vertical Line */}
+              <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-purple-500/50 to-transparent"></div>
+
+              <div className="space-y-12">
+                {[
+                  {
+                    year: "2024",
+                    title: "BS Computer Science",
+                    subtitle: "University of Gujrat",
+                    description: "Graduated with honors, specializing in AI and Data Science. Completed capstone project on Neural Networks.",
+                    type: "education",
+                    icon: GraduationCap,
+                    href: "https://uog.edu.pk/"
+                  },
+                  {
+                    year: "2024",
+                    title: "React.js Certification",
+                    subtitle: "LinkedIn Learning",
+                    description: "Advanced concepts including Hooks, Context API, and performance optimization for modern web apps.",
+                    type: "certification",
+                    icon: Code,
+                    href: "https://www.linkedin.com/learning/certificates/1a0836280fccd3487fca28edce2c52e949f9ef82b18196d88f849851b1f49b45?trk=share_certificate"
+                  },
+                  {
+                    year: "2024",
+                    title: "Node.js Certification",
+                    subtitle: "LinkedIn Learning",
+                    description: "Backend development mastery covering event-driven architecture, streams, and RESTful API design.",
+                    type: "certification",
+                    icon: Code,
+                    href: "https://www.linkedin.com/learning/certificates/ebfda41df6410f97ba15f155c1ffed28e257c0c96a4464c5e9df05871deb17e3?trk=share_certificate"
+                  },
+                  {
+                    year: "2024",
+                    title: "PHP & MySQL Certification",
+                    subtitle: "LinkedIn Learning",
+                    description: "Comprehensive guide to server-side scripting and database management for dynamic websites.",
+                    type: "certification",
+                    icon: Code,
+                    href: "https://www.linkedin.com/learning/certificates/6e4138cd0737cc95f6ce73d8ef23dba53c961800fa01c9db09713d5fb490b117?trk=share_certificate"
+                  },
+                  {
+                    year: "2024",
+                    title: "Flask Certification",
+                    subtitle: "LinkedIn Learning",
+                    description: "Building scalable web applications with Python using the Flask microframework.",
+                    type: "certification",
+                    icon: Code,
+                    href: "https://www.linkedin.com/learning/certificates/be3e2b2fbc3d16964905a846e9cade13a597934822560141bff571b96a2c13aa?trk=share_certificate"
+                  },
+                  {
+                    year: "2023",
+                    title: "Machine Learning Certification",
+                    subtitle: "Great Learning",
+                    description: "Intensive course covering supervised/unsupervised learning, neural networks, and deep learning architectures.",
+                    type: "certification",
+                    icon: Award,
+                    href: "https://www.mygreatlearning.com/certificate/FPMZDTXL"
+                  }
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className={`relative flex flex-col md:flex-row gap-8 ${
+                      index % 2 === 0 ? 'md:flex-row-reverse' : ''
+                    }`}
                   >
-                    <span>View Certificate</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                </motion.div>
-              ))}
-            </motion.div>
+                    <div className="flex-1"></div>
+                    
+                    {/* Timeline Dot */}
+                    <div className="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-background border-4 border-purple-500 z-10 flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                    </div>
+
+                    <div className={`flex-1 md:text-${index % 2 === 0 ? 'left' : 'right'} pl-10 md:pl-0`}>
+                      <a 
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="glass p-6 rounded-2xl hover-lift relative overflow-hidden group block hover:bg-white/5 transition-all"
+                      >
+                        <div className={`absolute top-0 ${index % 2 === 0 ? 'left-0' : 'right-0'} w-1 h-full bg-gradient-to-b from-purple-500 to-indigo-500`}></div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-purple-500/10 text-purple-600 text-sm font-bold mb-2">
+                          {item.year}
+                        </span>
+                        <h3 className="text-xl font-bold mb-1 flex items-center gap-2 md:justify-start group-hover:text-purple-500 transition-colors">
+                          {item.title}
+                          <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </h3>
+                        <p className="text-indigo-500 font-medium mb-2">{item.subtitle}</p>
+                        <p className="text-muted-foreground text-sm">{item.description}</p>
+                      </a>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Interests Section */}
-        <section id="interests" className="py-20 px-4">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              {...fadeInUp}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-4">Interests & Hobbies</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
-            </motion.div>
-
-            <motion.div
-              variants={stagger}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="grid md:grid-cols-3 gap-8"
-            >
-              {[
-                {
-                  title: 'Reading Books',
-                  description: 'Passionate about tech and self-development books that broaden my perspective and knowledge.',
-                  icon: '📚',
-                  color: 'text-blue-600'
-                },
-                {
-                  title: 'Tech Enthusiast',
-                  description: 'Constantly staying updated with emerging technologies and industry trends.',
-                  icon: '🚀',
-                  color: 'text-purple-600'
-                },
-                {
-                  title: 'Artificial Intelligence',
-                  description: 'Keen interest in the development and application of AI in various industries.',
-                  icon: '🤖',
-                  color: 'text-pink-600'
-                }
-              ].map((interest, index) => (
-                <motion.div
-                  key={interest.title}
-                  {...fadeInUp}
-                  whileHover={{ scale: 1.05 }}
-                  className="glass rounded-2xl p-8 hover-lift text-center"
-                >
-                  <div className="text-6xl mb-4 animate-float">{interest.icon}</div>
-                  <h3 className={`text-2xl font-semibold mb-4 ${interest.color}`}>{interest.title}</h3>
-                  <p className="text-gray-700 leading-relaxed">{interest.description}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
+        {/* Wave Separator after Education */}
+        <div className="w-full overflow-hidden leading-[0] transform rotate-180 -translate-y-1 bg-background">
+          <svg className="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-blue-500/5"></path>
+          </svg>
+        </div>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 px-4 section-bg-2">
+        <section id="contact" className="py-32 px-4 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/5 rounded-full blur-[120px] -z-10"></div>
           <div className="max-w-4xl mx-auto">
             <motion.div
-              {...fadeInUp}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-4">Get In Touch</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
-              <p className="text-gray-700 text-lg mt-4">I'd love to hear from you! Let's discuss your next project.</p>
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">Get <span className="gradient-text">In Touch</span></h2>
+              <p className="text-xl text-muted-foreground">Let&apos;s build something extraordinary together.</p>
             </motion.div>
 
             <motion.div
-              {...fadeInUp}
-              className="glass rounded-2xl p-8 hover-lift"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="relative"
             >
               <ContactForm />
             </motion.div>
           </div>
         </section>
+
+        {/* Footer */}
+        <footer className="py-12 px-4 border-t border-white/10 bg-black/5 backdrop-blur-sm relative overflow-hidden">
+          {/* Decorative background for footer */}
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none"></div>
+          
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
+            <div className="flex flex-col items-center md:items-start gap-4">
+              <div className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+                Asad Iqbal
+              </div>
+              <p className="text-muted-foreground text-sm text-center md:text-left max-w-xs">
+                Crafting digital experiences with passion and precision.
+              </p>
+              <p className="text-muted-foreground text-xs text-center md:text-left mt-2">
+                © {new Date().getFullYear()} Asad Iqbal. All rights reserved.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end gap-4">
+              <div className="flex items-center space-x-6">
+                {[
+                  { icon: Github, href: "https://github.com/Asad-Iqbal407" },
+                  { icon: Linkedin, href: "https://linkedin.com/in/asad-iqbal" },
+                  { icon: Mail, href: "mailto:measad408@gmail.com" }
+                ].map((social, i) => (
+                  <motion.a
+                    key={i}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="w-10 h-10 rounded-xl glass flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-purple-500 transition-colors shadow-sm"
+                  >
+                    <social.icon size={20} />
+                  </motion.a>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                Made with <span className="text-red-500 animate-pulse">❤️</span> using Next.js & Tailwind
+              </p>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
