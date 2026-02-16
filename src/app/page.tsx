@@ -10,12 +10,43 @@ import Image from 'next/image';
 export default function Home() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [roleIndex, setRoleIndex] = useState(0);
+  const [certificates, setCertificates] = useState<any[]>([]);
+  const [loadingCertificates, setLoadingCertificates] = useState(true);
+
   const roles = [
     "Computer Science Student",
     "AI Enthusiast",
     "Full Stack Developer",
     "Problem Solver"
   ];
+
+  useEffect(() => {
+    const fetchCertificates = async () => {
+      try {
+        const response = await fetch('/api/certificates');
+        if (response.ok) {
+          const data = await response.json();
+          // Transform data to match UI requirements
+          const formattedData = data.map((cert: any) => ({
+            year: new Date(cert.date).getFullYear().toString(),
+            title: cert.title,
+            subtitle: cert.issuer,
+            description: cert.description,
+            type: cert.type,
+            icon: cert.type === 'education' ? GraduationCap : (cert.title.includes('Machine Learning') ? Award : Code),
+            href: cert.link
+          }));
+          setCertificates(formattedData);
+        }
+      } catch (error) {
+        console.error('Failed to fetch certificates:', error);
+      } finally {
+        setLoadingCertificates(false);
+      }
+    };
+
+    fetchCertificates();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -417,105 +448,57 @@ export default function Home() {
               {/* Vertical Line */}
               <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-purple-500/50 to-transparent"></div>
 
-              <div className="space-y-12">
-                {[
-                  {
-                    year: "2024",
-                    title: "BS Computer Science",
-                    subtitle: "University of Gujrat",
-                    description: "Graduated with honors, specializing in AI and Data Science. Completed capstone project on Neural Networks.",
-                    type: "education",
-                    icon: GraduationCap,
-                    href: "https://uog.edu.pk/"
-                  },
-                  {
-                    year: "2024",
-                    title: "React.js Certification",
-                    subtitle: "LinkedIn Learning",
-                    description: "Advanced concepts including Hooks, Context API, and performance optimization for modern web apps.",
-                    type: "certification",
-                    icon: Code,
-                    href: "https://www.linkedin.com/learning/certificates/1a0836280fccd3487fca28edce2c52e949f9ef82b18196d88f849851b1f49b45?trk=share_certificate"
-                  },
-                  {
-                    year: "2024",
-                    title: "Node.js Certification",
-                    subtitle: "LinkedIn Learning",
-                    description: "Backend development mastery covering event-driven architecture, streams, and RESTful API design.",
-                    type: "certification",
-                    icon: Code,
-                    href: "https://www.linkedin.com/learning/certificates/ebfda41df6410f97ba15f155c1ffed28e257c0c96a4464c5e9df05871deb17e3?trk=share_certificate"
-                  },
-                  {
-                    year: "2024",
-                    title: "PHP & MySQL Certification",
-                    subtitle: "LinkedIn Learning",
-                    description: "Comprehensive guide to server-side scripting and database management for dynamic websites.",
-                    type: "certification",
-                    icon: Code,
-                    href: "https://www.linkedin.com/learning/certificates/6e4138cd0737cc95f6ce73d8ef23dba53c961800fa01c9db09713d5fb490b117?trk=share_certificate"
-                  },
-                  {
-                    year: "2024",
-                    title: "Flask Certification",
-                    subtitle: "LinkedIn Learning",
-                    description: "Building scalable web applications with Python using the Flask microframework.",
-                    type: "certification",
-                    icon: Code,
-                    href: "https://www.linkedin.com/learning/certificates/be3e2b2fbc3d16964905a846e9cade13a597934822560141bff571b96a2c13aa?trk=share_certificate"
-                  },
-                  {
-                    year: "2023",
-                    title: "Machine Learning Certification",
-                    subtitle: "Great Learning",
-                    description: "Intensive course covering supervised/unsupervised learning, neural networks, and deep learning architectures.",
-                    type: "certification",
-                    icon: Award,
-                    href: "https://www.mygreatlearning.com/certificate/FPMZDTXL"
-                  }
-                ].map((item, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className={`relative flex flex-col md:flex-row gap-8 ${
-                      index % 2 === 0 ? 'md:flex-row-reverse' : ''
-                    }`}
-                  >
-                    <div className="flex-1"></div>
-                    
-                    {/* Timeline Dot */}
-                    <div className="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-background border-4 border-purple-500 z-10 flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                    </div>
+              {loadingCertificates ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+                </div>
+              ) : (
+                <div className="space-y-12">
+                  {certificates.map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className={`relative flex flex-col md:flex-row gap-8 ${
+                        index % 2 === 0 ? 'md:flex-row-reverse' : ''
+                      }`}
+                    >
+                      <div className="flex-1"></div>
+                      
+                      {/* Timeline Dot */}
+                      <div className="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-background border-4 border-purple-500 z-10 flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                      </div>
 
-                    <div className={`flex-1 md:text-${index % 2 === 0 ? 'left' : 'right'} pl-10 md:pl-0`}>
-                      <a 
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="glass p-6 rounded-2xl hover-lift relative overflow-hidden group block hover:bg-white/5 transition-all"
-                      >
-                        <div className={`absolute top-0 ${index % 2 === 0 ? 'left-0' : 'right-0'} w-1 h-full bg-gradient-to-b from-purple-500 to-indigo-500`}></div>
-                        <span className="inline-block px-3 py-1 rounded-full bg-purple-500/10 text-purple-600 text-sm font-bold mb-2">
-                          {item.year}
-                        </span>
-                        <h3 className="text-xl font-bold mb-1 flex items-center gap-2 md:justify-start group-hover:text-purple-500 transition-colors">
-                          {item.title}
-                          <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                        </h3>
-                        <p className="text-indigo-500 font-medium mb-2">{item.subtitle}</p>
-                        <p className="text-muted-foreground text-sm">{item.description}</p>
-                      </a>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                      <div className={`flex-1 md:text-${index % 2 === 0 ? 'left' : 'right'} pl-10 md:pl-0`}>
+                        <a 
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="glass p-6 rounded-2xl hover-lift relative overflow-hidden group block hover:bg-white/5 transition-all"
+                        >
+                          <div className={`absolute top-0 ${index % 2 === 0 ? 'left-0' : 'right-0'} w-1 h-full bg-gradient-to-b from-purple-500 to-indigo-500`}></div>
+                          <span className="inline-block px-3 py-1 rounded-full bg-purple-500/10 text-purple-600 text-sm font-bold mb-2">
+                            {item.year}
+                          </span>
+                          <h3 className="text-xl font-bold mb-1 flex items-center gap-2 md:justify-start group-hover:text-purple-500 transition-colors">
+                            {item.title}
+                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </h3>
+                          <p className="text-indigo-500 font-medium mb-2">{item.subtitle}</p>
+                          <p className="text-muted-foreground text-sm">{item.description}</p>
+                        </a>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
+
           </div>
         </section>
 
