@@ -8,6 +8,10 @@ if (!MONGODB_URI) {
   );
 }
 
+// Database name for the connection
+const DB_NAME = "asadiqbalprofile";
+
+
 const cached =
   globalThis.mongoose ?? (globalThis.mongoose = { conn: null, promise: null });
 
@@ -19,10 +23,19 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      dbName: DB_NAME,
+      // MongoDB Atlas specific options for better performance
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((m) => m);
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((m) => {
+      console.log(`Connected to MongoDB database: ${DB_NAME}`);
+      return m;
+    });
   }
+
 
   try {
     cached.conn = await cached.promise;
