@@ -1,17 +1,48 @@
 'use client';
 
 import { motion, useScroll, useAnimation } from 'framer-motion';
-import { MapPin, Phone, Mail, Github, Linkedin, User, Code, Briefcase, GraduationCap, Award, ArrowUp } from 'lucide-react';
+import { MapPin, Phone, Mail, Github, Linkedin, User, Code, Briefcase, GraduationCap, Award, ArrowUp, Grid3X3 } from 'lucide-react';
 import ContactForm from "@/components/ContactForm";
 import ImageSlider from "@/components/ImageSlider";
+import ProjectsGrid from "@/components/ProjectsGrid";
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+
 
 export default function Home() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [roleIndex, setRoleIndex] = useState(0);
-  const [certificates, setCertificates] = useState<any[]>([]);
+  const [certificates, setCertificates] = useState<any[]>([
+    {
+      year: "2024",
+      title: "BS Computer Science",
+      subtitle: "University of Gujrat",
+      description: "Graduated with honors, specializing in AI and Data Science.",
+      type: "education",
+      icon: GraduationCap,
+      href: "https://uog.edu.pk/"
+    },
+    {
+      year: "2024",
+      title: "React.js Certification",
+      subtitle: "LinkedIn Learning",
+      description: "Advanced concepts including Hooks, Context API, and performance optimization.",
+      type: "certification",
+      icon: Code,
+      href: "https://www.linkedin.com/learning/"
+    },
+    {
+      year: "2024",
+      title: "Machine Learning Certification",
+      subtitle: "Great Learning",
+      description: "Comprehensive ML course covering supervised and unsupervised learning.",
+      type: "certification",
+      icon: Award,
+      href: "https://www.mygreatlearning.com/"
+    }
+  ]);
   const [loadingCertificates, setLoadingCertificates] = useState(true);
+
 
   const roles = [
     "Computer Science Student",
@@ -21,9 +52,24 @@ export default function Home() {
   ];
 
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchCertificates = async () => {
       try {
-        const response = await fetch('/api/certificates');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const response = await fetch('/api/certificates', {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!isMounted) return;
+        
         if (response.ok) {
           const data = await response.json();
           // Transform data to match UI requirements
@@ -39,14 +85,28 @@ export default function Home() {
           setCertificates(formattedData);
         }
       } catch (error) {
-        console.error('Failed to fetch certificates:', error);
+        if (!isMounted) return;
+        
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.warn('Certificates fetch timed out, using fallback data');
+        } else {
+          console.warn('Failed to fetch certificates:', error);
+        }
+        // Keep using fallback data
       } finally {
-        setLoadingCertificates(false);
+        if (isMounted) {
+          setLoadingCertificates(false);
+        }
       }
     };
 
     fetchCertificates();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -421,8 +481,30 @@ export default function Home() {
             </motion.div>
 
             <ImageSlider />
+
+            {/* All Projects Grid */}
+            <div className="mt-24">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-center mb-16"
+              >
+                <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass mb-6">
+                  <Grid3X3 className="w-5 h-5 text-purple-500" />
+                  <span className="text-sm font-medium">Browse All Projects</span>
+                </div>
+                <h3 className="text-3xl md:text-4xl font-bold mb-4">Project Gallery</h3>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Explore the complete collection of my work. Each project represents a unique challenge and solution.
+                </p>
+              </motion.div>
+
+              <ProjectsGrid />
+            </div>
           </div>
         </section>
+
 
         {/* Wave Separator before Education */}
         <div className="w-full overflow-hidden leading-[0] transform translate-y-1 bg-background">
