@@ -162,9 +162,9 @@ export default function ImageSlider() {
                 </div>
 
                 {/* Title */}
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight drop-shadow-xl">
+                <h3 className="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight drop-shadow-xl">
                   {currentProject.title}
-                </h2>
+                </h3>
                 
                 {/* Description */}
                 <p className="text-base md:text-xl text-gray-200 leading-relaxed mb-6 max-w-xl drop-shadow-lg">
@@ -172,14 +172,17 @@ export default function ImageSlider() {
                 </p>
                 
                 {/* CTA Button */}
-                <button
-                  onClick={() => window.open(currentProject.link, '_blank')}
+                <a
+                  href={currentProject.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Visit ${currentProject.title}`}
                   className="group/btn inline-flex items-center gap-2 px-7 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white font-bold rounded-full shadow-xl shadow-purple-600/40 hover:shadow-2xl hover:shadow-purple-600/50 transition-all duration-300 hover:scale-105 hover:-translate-y-1"
                 >
                   <Sparkles className="w-5 h-5 group-hover/btn:animate-pulse" />
                   <span>Visit Project</span>
                   <ExternalLink className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+                </a>
               </motion.div>
             </div>
           </div>
@@ -190,12 +193,14 @@ export default function ImageSlider() {
       <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
         <button
           onClick={prevSlide}
+          aria-label="Previous project"
           className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md text-white hover:bg-white/30 transition-all duration-300 pointer-events-auto shadow-2xl border border-white/20 hover:scale-110"
         >
           <ChevronLeft className="w-7 h-7" />
         </button>
         <button
           onClick={nextSlide}
+          aria-label="Next project"
           className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md text-white hover:bg-white/30 transition-all duration-300 pointer-events-auto shadow-2xl border border-white/20 hover:scale-110"
         >
           <ChevronRight className="w-7 h-7" />
@@ -204,9 +209,10 @@ export default function ImageSlider() {
 
       {/* Progress Indicators */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-        {projects.map((_, index) => (
+        {projects.map((project, index) => (
           <button
             key={index}
+            aria-label={`Show project ${index + 1}: ${project.title}`}
             onClick={() => {
               setDirection(index > currentIndex ? 1 : -1);
               setCurrentIndex(index);

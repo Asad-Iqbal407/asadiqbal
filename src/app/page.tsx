@@ -148,12 +148,13 @@ export default function Home() {
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: showScrollTop ? 1 : 0, scale: showScrollTop ? 1 : 0 }}
         onClick={scrollToTop}
+        aria-label="Scroll back to top"
         className="fixed bottom-8 right-8 z-50 p-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-xl hover:shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 hover:scale-110 border border-white/20"
       >
         <ArrowUp size={24} />
       </motion.button>
 
-      <div className="pt-0">
+      <main className="pt-0">
         {/* Hero Section */}
         <section id="home" className="min-h-[90vh] flex items-center justify-center relative overflow-hidden px-4">
           {/* Animated Background Elements */}
@@ -226,13 +227,13 @@ export default function Home() {
               </div>
 
               <div className="mt-12 flex items-center space-x-8">
-                <a href="https://github.com/Asad-Iqbal407" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-purple-500 transition-colors transform hover:scale-110">
+                <a href="https://github.com/Asad-Iqbal407" target="_blank" rel="noopener noreferrer me" aria-label="Asad Iqbal on GitHub" className="text-muted-foreground hover:text-purple-500 transition-colors transform hover:scale-110">
                   <Github size={28} />
                 </a>
-                <a href="https://linkedin.com/in/asad-iqbal" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-500 transition-colors transform hover:scale-110">
+                <a href="https://linkedin.com/in/asad-iqbal" target="_blank" rel="noopener noreferrer me" aria-label="Asad Iqbal on LinkedIn" className="text-muted-foreground hover:text-blue-500 transition-colors transform hover:scale-110">
                   <Linkedin size={28} />
                 </a>
-                <a href="mailto:measad408@gmail.com" className="text-muted-foreground hover:text-red-500 transition-colors transform hover:scale-110">
+                <a href="mailto:measad408@gmail.com" aria-label="Email Asad Iqbal" className="text-muted-foreground hover:text-red-500 transition-colors transform hover:scale-110">
                   <Mail size={28} />
                 </a>
               </div>
@@ -616,6 +617,8 @@ export default function Home() {
           </div>
         </section>
 
+        </main>
+
         {/* Footer */}
         <footer className="py-12 px-4 border-t border-white/10 bg-black/5 backdrop-blur-sm relative overflow-hidden">
           {/* Decorative background for footer */}
@@ -637,13 +640,14 @@ export default function Home() {
             <div className="flex flex-col items-center md:items-end gap-4">
               <div className="flex items-center space-x-6">
                 {[
-                  { icon: Github, href: "https://github.com/Asad-Iqbal407" },
-                  { icon: Linkedin, href: "https://linkedin.com/in/asad-iqbal" },
-                  { icon: Mail, href: "mailto:measad408@gmail.com" }
+                  { icon: Github, label: "Asad Iqbal on GitHub", href: "https://github.com/Asad-Iqbal407" },
+                  { icon: Linkedin, label: "Asad Iqbal on LinkedIn", href: "https://linkedin.com/in/asad-iqbal" },
+                  { icon: Mail, label: "Email Asad Iqbal", href: "mailto:measad408@gmail.com" }
                 ].map((social, i) => (
                   <motion.a
                     key={i}
                     href={social.href}
+                    aria-label={social.label}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.2, rotate: 5 }}
@@ -660,7 +664,6 @@ export default function Home() {
             </div>
           </div>
         </footer>
-      </div>
     </div>
   );
 }
