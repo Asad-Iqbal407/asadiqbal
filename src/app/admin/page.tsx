@@ -96,12 +96,14 @@ export default function AdminPage() {
       return;
     }
 
-    fetchMessages(storedToken);
+    const initialLoad = setTimeout(() => fetchMessages(storedToken), 0);
 
     // Check notification permission status
-    if ('Notification' in window && Notification.permission === 'granted') {
-      setNotificationsEnabled(true);
-    }
+    const notificationCheck = setTimeout(() => {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        setNotificationsEnabled(true);
+      }
+    }, 0);
 
     // Polling for new messages every 30 seconds
     const interval = setInterval(() => {
@@ -111,7 +113,11 @@ export default function AdminPage() {
       }
     }, 30000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(initialLoad);
+      clearTimeout(notificationCheck);
+      clearInterval(interval);
+    };
   }, [fetchMessages, router]);
 
   // Reset title when page becomes visible

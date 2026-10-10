@@ -8,7 +8,8 @@ export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    message: ''
+    message: '',
+    website: '' // honeypot: hidden from people, filled in by bots
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
@@ -39,7 +40,10 @@ export default function ContactForm() {
       if (response.ok) {
         setSubmitMessage('Thank you for your message! I will get back to you soon.');
         setSubmitStatus('success');
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: '', email: '', message: '', website: '' });
+      } else if (response.status === 429) {
+        setSubmitMessage('You have sent several messages recently. Please try again in a few minutes.');
+        setSubmitStatus('error');
       } else {
         setSubmitMessage('Failed to send message. Please try again.');
         setSubmitStatus('error');
@@ -63,6 +67,18 @@ export default function ContactForm() {
       </motion.h3>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+          <label htmlFor="website">Leave this field empty</label>
+          <input
+            type="text"
+            id="website"
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -79,8 +95,10 @@ export default function ContactForm() {
               value={formData.name}
               onChange={handleChange}
               required
+              maxLength={100}
+              autoComplete="name"
               className="w-full px-5 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border border-gray-200 dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 placeholder:text-gray-400"
-              placeholder="John Doe"
+              placeholder="Your name"
             />
           </motion.div>
 
@@ -99,8 +117,10 @@ export default function ContactForm() {
               value={formData.email}
               onChange={handleChange}
               required
+              maxLength={254}
+              autoComplete="email"
               className="w-full px-5 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border border-gray-200 dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 placeholder:text-gray-400"
-              placeholder="john@example.com"
+              placeholder="you@example.com"
             />
           </motion.div>
         </div>
@@ -120,6 +140,7 @@ export default function ContactForm() {
             onChange={handleChange}
             required
             rows={5}
+            maxLength={5000}
             className="w-full px-5 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border border-gray-200 dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 placeholder:text-gray-400 resize-none"
             placeholder="Tell me about your project..."
           />
@@ -155,6 +176,7 @@ export default function ContactForm() {
         <AnimatePresence>
           {submitMessage && (
             <motion.div
+              role={submitStatus === 'error' ? 'alert' : 'status'}
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 10 }}

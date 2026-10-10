@@ -11,7 +11,7 @@ export async function GET() {
     
     // Merge database data with catalog images
     const mergedProjects = projectCatalog.map(catalogItem => {
-      const dbMatch = dbProjects.find((p: any) => 
+      const dbMatch = dbProjects.find((p: { link?: string; title?: string }) => 
         p.link === catalogItem.link || p.title === catalogItem.title
       );
       

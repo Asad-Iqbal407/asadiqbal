@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Asad Iqbal: Portfolio
 
-## Getting Started
+Personal portfolio and project showcase of Asad Iqbal, a full stack developer based in Lisbon, Portugal.
 
-First, run the development server:
+**Live site:** https://asadiqbal.vercel.app
+
+## What's inside
+
+- Single-page portfolio: hero, about, skills, featured work, education and certifications, contact form
+- Individual pages for every project (`/projects/[slug]`) and in-depth case studies (`/case-studies/[slug]`)
+- Contact form that stores messages in MongoDB, with a private admin inbox at `/admin`
+- SEO: per-page metadata, Open Graph image, JSON-LD structured data, sitemap and robots
+
+## Tech stack
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Framer Motion · MongoDB (Mongoose) · jose (JWT) · bcryptjs
+
+## Getting started
 
 ```bash
+npm install
+cp .env.example .env.local   # then fill in the values
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+| --- | --- |
+| `MONGODB_URI` | MongoDB Atlas connection string |
+| `JWT_SECRET` | Signs admin session tokens (32+ random characters) |
+| `NEXT_PUBLIC_SITE_URL` | Public URL used for canonical links, sitemap and structured data |
 
-## Learn More
+The site still renders without a database: projects and certificates fall back to the bundled catalogs in `src/data`. The database is needed for the contact form and the admin inbox.
 
-To learn more about Next.js, take a look at the following resources:
+### Creating the admin account
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Credentials are read from the environment only, never from source code. Running the script again resets the password.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='a long unique passphrase' npm run create-admin
+```
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint |
+| `npm run create-admin` | Create or reset the admin account |
+| `npm run upsert-projects` | Add extra projects to the database without overwriting existing ones |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project structure
+
+```
+src/
+  app/            Routes: home, /projects, /case-studies, /admin, API routes
+  components/     UI components (navigation, sliders, forms, JSON-LD, ...)
+  data/           Project, case study and certificate content
+  lib/            Database connection, auth tokens, rate limiting, SEO constants
+  models/         Mongoose models
+scripts/          One-off maintenance scripts
+```
+
+## Security notes
+
+- Admin sessions use signed, expiring JWTs. Login and the contact form are rate limited, and the contact form has a honeypot field.
+- The rate limiter is in-memory per server instance. For a strict global limit, back it with a shared store such as Redis.
+- Security headers are set in `next.config.mjs`.
+
+## Deployment
+
+Deployed on [Vercel](https://vercel.com). Set the environment variables above in the project settings; pushes to `master` deploy to production.

@@ -1,18 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Code, Briefcase, GraduationCap, Award, Heart, Mail } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
-const navItems = [
-  { name: 'Home', href: '#home', icon: Home },
-  { name: 'About', href: '#about', icon: User },
-  { name: 'Skills', href: '#skills', icon: Code },
-  { name: 'Projects', href: '#projects', icon: Briefcase },
-  { name: 'Education', href: '#education', icon: GraduationCap },
-  { name: 'Certifications', href: '#certifications', icon: Award },
-  { name: 'Interests', href: '#interests', icon: Heart },
-  { name: 'Contact', href: '#contact', icon: Mail },
+const sectionItems = [
+  { name: 'Home', href: '#home' },
+  { name: 'About', href: '#about' },
+  { name: 'Skills', href: '#skills' },
+  { name: 'Projects', href: '#projects' },
+  { name: 'Journey', href: '#education' },
+  { name: 'Contact', href: '#contact' },
 ];
 
 export default function Navigation() {
@@ -24,124 +23,137 @@ export default function Navigation() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      const sections = navItems.map(item => item.href.substring(1));
-      const current = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
+      const current = sectionItems
+        .map((item) => item.href.substring(1))
+        .find((id) => {
+          const element = document.getElementById(id);
+          if (!element) return false;
           const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
+          return rect.top <= 120 && rect.bottom >= 120;
+        });
       if (current) setActiveSection(current);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (href: string) => {
+  const goToSection = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     const element = document.getElementById(href.substring(1));
     if (element) {
+      event.preventDefault();
       element.scrollIntoView({ behavior: 'smooth' });
+      window.history.replaceState(null, '', href);
     }
     setIsOpen(false);
   };
 
+  const linkClass = (active: boolean) =>
+    `relative rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
+      active ? 'text-white' : 'text-foreground/70 hover:text-purple-500'
+    }`;
+
   return (
     <motion.nav
+      aria-label="Main"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'glass shadow-lg py-2'
-          : 'bg-transparent py-4'
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ${
+        scrolled ? 'glass py-2 shadow-lg' : 'bg-transparent py-4'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="text-2xl font-extrabold tracking-tight cursor-pointer"
-            onClick={() => scrollToSection('#home')}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <a
+            href="#home"
+            onClick={(event) => goToSection(event, '#home')}
+            className="text-2xl font-extrabold tracking-tight"
           >
-            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient-x">
+            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
               Asad Iqbal
             </span>
-          </motion.div>
+          </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => {
+          {/* Desktop navigation */}
+          <div className="hidden items-center space-x-1 md:flex">
+            {sectionItems.map((item) => {
               const isActive = activeSection === item.href.substring(1);
               return (
-                <motion.button
+                <a
                   key={item.name}
-                  onClick={() => scrollToSection(item.href)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`relative flex items-center px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    isActive
-                      ? 'text-white'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-purple-500'
-                  }`}
+                  href={item.href}
+                  onClick={(event) => goToSection(event, item.href)}
+                  aria-current={isActive ? 'true' : undefined}
+                  className={linkClass(isActive)}
                 >
                   {isActive && (
-                    <motion.div
+                    <motion.span
                       layoutId="nav-pill"
-                      className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full -z-10"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600"
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                  <span>{item.name}</span>
-                </motion.button>
+                  {item.name}
+                </a>
               );
             })}
+            <Link href="/case-studies" className={linkClass(false)}>
+              Case studies
+            </Link>
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-xl glass text-gray-700 dark:text-gray-300"
+            <button
+              type="button"
+              onClick={() => setIsOpen((open) => !open)}
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+              className="glass rounded-xl p-2 text-foreground"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </motion.button>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile navigation */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden absolute top-full left-4 right-4 mt-2"
+            className="absolute left-4 right-4 top-full mt-2 md:hidden"
           >
-            <div className="glass rounded-2xl p-4 shadow-2xl space-y-2 border border-white/20">
-              {navItems.map((item) => {
-                const Icon = item.icon;
+            <div className="glass space-y-1 rounded-2xl border border-white/20 p-4 shadow-2xl">
+              {sectionItems.map((item) => {
                 const isActive = activeSection === item.href.substring(1);
                 return (
-                  <motion.button
+                  <a
                     key={item.name}
-                    onClick={() => scrollToSection(item.href)}
-                    whileTap={{ scale: 0.98 }}
-                    className={`flex items-center space-x-4 w-full px-4 py-3 rounded-xl text-base font-semibold transition-all duration-200 ${
+                    href={item.href}
+                    onClick={(event) => goToSection(event, item.href)}
+                    className={`block rounded-xl px-4 py-3 text-base font-semibold transition-colors ${
                       isActive
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-white/10'
+                        : 'text-foreground/80 hover:bg-foreground/5'
                     }`}
                   >
-                    <Icon size={20} />
-                    <span>{item.name}</span>
-                  </motion.button>
+                    {item.name}
+                  </a>
                 );
               })}
+              <Link
+                href="/case-studies"
+                className="block rounded-xl px-4 py-3 text-base font-semibold text-foreground/80 hover:bg-foreground/5"
+              >
+                Case studies
+              </Link>
             </div>
           </motion.div>
         )}

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { mergeProjects, projectCatalog, ProjectCatalogItem } from '@/data/projects';
 import { hasProjectPage } from '@/data/project-slugs';
-import { ExternalLink, Sparkles, Layers, Zap } from 'lucide-react';
+import { ExternalLink, Zap } from 'lucide-react';
 
 const MotionLink = motion.create(Link);
 
