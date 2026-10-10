@@ -1,4 +1,5 @@
 import { projectCatalog } from "@/data/projects";
+import { hasProjectPage } from "@/data/project-slugs";
 import {
   CONTACT_EMAIL,
   SITE_DESCRIPTION,
@@ -73,7 +74,8 @@ const projects = {
       "@type": "CreativeWork",
       name: project.title,
       description: project.description,
-      url: project.link,
+      url: hasProjectPage(project.id) ? `${SITE_URL}/projects/${project.id}` : project.link,
+      sameAs: project.link,
       keywords: project.tags.join(", "),
       creator: { "@id": `${SITE_URL}/#person` },
     },

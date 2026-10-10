@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { mergeProjects, projectCatalog, ProjectCatalogItem } from '@/data/projects';
+import { hasProjectPage } from '@/data/project-slugs';
 import { ExternalLink, Sparkles, Layers, Zap } from 'lucide-react';
+
+const MotionLink = motion.create(Link);
 
 // Fallback image for failed project previews
 const FALLBACK_IMAGE = 'https://placehold.co/800x600/1a1a2e/FFF?text=Project+Preview&font=montserrat';
@@ -74,12 +78,13 @@ export default function ProjectsGrid() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {projects.map((project, index) => (
-        <motion.a
+      {projects.map((project, index) => {
+        const internal = hasProjectPage(project.id);
+        return (
+        <MotionLink
           key={project.id ?? `${project.title}-${index}`}
-          href={project.link}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={internal ? `/projects/${project.id}` : project.link}
+          {...(internal ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -136,16 +141,17 @@ export default function ProjectsGrid() {
             {/* Visit link indicator */}
             <div className="flex items-center gap-1.5 pt-2 text-xs font-medium text-purple-400 opacity-0 group-hover:opacity-100 transition-all duration-300">
               <Zap className="w-3 h-3" />
-              <span>Visit Project</span>
+              <span>{internal ? 'View project details' : 'Visit Project'}</span>
             </div>
           </div>
-          
+
           {/* Corner accent */}
           <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
             <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-purple-600/30 to-transparent rounded-bl-full"></div>
           </div>
-        </motion.a>
-      ))}
+        </MotionLink>
+        );
+      })}
     </div>
   );
 }

@@ -7,6 +7,7 @@ import ImageSlider from "@/components/ImageSlider";
 import ProjectsGrid from "@/components/ProjectsGrid";
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 
 export default function Home() {
@@ -502,6 +503,15 @@ export default function Home() {
               </motion.div>
 
               <ProjectsGrid />
+
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                <Link href="/projects" className="btn-primary text-lg">
+                  All projects
+                </Link>
+                <Link href="/case-studies" className="btn-secondary text-lg">
+                  Read the case studies
+                </Link>
+              </div>
             </div>
           </div>
         </section>
